@@ -1,0 +1,12 @@
+# The HTTP endpoint for your Prisma API
+#endpoint: ''
+#endpoint: http://localhost:4466
+endpoint: https://us1.prisma.sh/venkateswar-reddy-2ff1b7/hackernews-clone/dev
+
+# Points to the file that contains your datamodel
+datamodel: datamodel.graphql
+
+# Specifies language & location for the generated Prisma client
+generate:
+  - generator: javascript-client
+    output: ../src/generated/prisma-client

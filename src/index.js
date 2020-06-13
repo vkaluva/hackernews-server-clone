@@ -1,34 +1,23 @@
 const { GraphQLServer } = require('graphql-yoga')
-
-
-// in-memoery links for testing
-let links = [{
-    id: 'link-0',
-    url: 'www.howtographql.com',
-    description: 'Fullstack tutorial for GraphQL'
-}]
-
-
-let idCount = links.length
+const { prisma } = require('./generated/prisma-client')
 
 const resolvers = {
     Query: {
         info: () => `This is the API of a Hackernews Clone`,
-        feed: () => links,
+        feed: (root, args, context, info) => {
+            return context.prisma.links()
+        },
         link: (parent, args) => {
             const id = args.id
             return links.find((link) => { return link.id == id })
         }
     },
     Mutation: {
-        post: (parent, args) => {
-            const link = {
-                id: `link-${idCount++}`,
-                description: args.description,
+        post: (root, args, context) => {
+            return context.prisma.createLink({
                 url: args.url,
-            }
-            links.push(link)
-            return link
+                description: args.description,
+            })
         },
         updateLink: (parent, args) => {
             let foundIndex = links.findIndex((link) => { return link.id == args.id })
@@ -60,5 +49,6 @@ const resolvers = {
 const server = new GraphQLServer({
     typeDefs: './src/schema.graphql',
     resolvers,
+    context: { prisma },
 })
 server.start(() => console.log(`Server is running on http://localhost:4000`))
