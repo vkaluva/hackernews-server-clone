@@ -5,6 +5,7 @@ type Link {
   url: String!
   updatedAt: DateTime! @updatedAt
   postedBy: User
+  votes: [Vote!]!
 }
 
 type User {
@@ -13,4 +14,10 @@ type User {
   email: String! @unique
   password: String!
   links: [Link!]!
+}
+
+type Vote {
+  id: ID! @id
+  link: Link!
+  user: User!
 }
