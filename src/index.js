@@ -7,9 +7,8 @@ const resolvers = {
         feed: (root, args, context, info) => {
             return context.prisma.links()
         },
-        link: (parent, args) => {
-            const id = args.id
-            return links.find((link) => { return link.id == id })
+        link: (root, args, context, info) => {
+            return context.prisma.link({ id: args.id })
         }
     },
     Mutation: {
@@ -19,28 +18,18 @@ const resolvers = {
                 description: args.description,
             })
         },
-        updateLink: (parent, args) => {
-            let foundIndex = links.findIndex((link) => { return link.id == args.id })
-            if (foundIndex > -1) {
-                const link = {
-                    id: args.id,
-                    description: args.description,
+        updateLink: (root, args, context) => {
+            return context.prisma.updateLink({
+                where: { id: args.id },
+                data: {
                     url: args.url,
+                    description: args.description,
                 }
-                links[foundIndex] = link
-                return link
-            }
-            return null
+            })
 
         },
-        deleteLink: (parent, args) => {
-            let foundIndex = links.findIndex(link => link.id == args.id)
-            if (foundIndex > -1) {
-                const link = links[foundIndex]
-                links.splice(foundIndex, 1)
-                return link
-            }
-            return null
+        deleteLink: (root, args, context) => {
+            return context.prisma.deleteLink({ id: args.id })
         }
     }
 }
